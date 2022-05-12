@@ -1,53 +1,94 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Template from "./components/Template";
 import TodoList from "./components/TodoList";
-import styled from 'styled-components';
-import {MdAddCircle} from 'react-icons/md'
-import TodoInsert from './components/TodoInsert';
+import { MdAddCircle } from "react-icons/md";
+import TodoInsert from "./components/TodoInsert";
 
-const Main = styled.div `
-display: flex;
-justify-content: center;
-`;
+let nextId = 4;
 
-const TodoBtn = styled.div`
-margin-bottom: 20px;
-bottom: 0;
-position: fixed;
-cursor: pointer;
-font-size: 70px;
-color: #8c82FF;
-`;
-
-function App() {
+const App = () => {
+  const [selectedTodo, setSelectedTodo] = useState(null);
+  const [insertToggle, setInsertToggle] = useState(false);
   const [todos, setTodos] = useState([
     {
       id: 1,
-      text: "리액트 마스터하기",
+      text: "할일 1",
       checked: true
     },
     {
       id: 2,
-      text: "공부하기 1시간",
+      text: "할일 2",
       checked: false
     },
     {
       id: 3,
-      text: "밥먹기",
+      text: "할일 3",
       checked: true
-    },
+    }
   ]);
+
+  const onInsertToggle = () => {
+    if (selectedTodo) {
+      setSelectedTodo(null);
+    }
+    setInsertToggle(prev => !prev);
+  };
+
+  const onInsertTodo = text => {
+    if (text === "") {
+      return alert("할 일을 입력해주세요.");
+    } else {
+      const todo = {
+        id: nextId,
+        text,
+        checked: false
+      };
+      setTodos(todos => todos.concat(todo));
+      nextId++;
+    }
+  };
+  const onCheckToggle = id => {
+    setTodos(todos =>
+      todos.map(todo =>
+        todo.id === id ? { ...todo, checked: !todo.checked } : todo
+      )
+    );
+  };
+  const onChangeSelectedTodo = todo => {
+    setSelectedTodo(todo);
+  };
+  const onRemove = id => {
+    onInsertToggle();
+    setTodos(todos => todos.filter(todo => todo.id !== id));
+  };
+  const onUpdate = (id, text) => {
+    onInsertToggle();
+    setTodos(todos =>
+      todos.map(todo => (todo.id === id ? { ...todo, text } : todo))
+    );
+  };
   return (
-    <Main>
-      <Template todoLength = {todos.length}>
-        <TodoList todos={todos}/>
-        <TodoBtn>
-          <MdAddCircle/>
-        </TodoBtn>
-        <TodoInsert/>
-      </Template>
-    </Main>
+    <Template todoLength={todos.length}>
+      <TodoList
+        todos={todos}
+        onCheckToggle={onCheckToggle}
+        onInsertToggle={onInsertToggle}
+        onChangeSelectedTodo={onChangeSelectedTodo}
+      />
+      <div className="add-todo-button" onClick={onInsertToggle}>
+        <MdAddCircle />
+      </div>
+      {insertToggle && (
+        <TodoInsert
+          selectedTodo={selectedTodo}
+          onInsertToggle={onInsertToggle}
+          onInsertTodo={onInsertTodo}
+          onRemove={onRemove}
+          onUpdate={onUpdate}
+        />
+      )}
+    </Template>
   );
-}
+};
 
 export default App;
