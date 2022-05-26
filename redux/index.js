@@ -5,16 +5,11 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import { createStore } from 'redux';
+import rootReducer from './modules';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-
-const weight = 100;
-
-function reducer(state = weight, action){
-  return state
-}
-
-let store = createStore(reducer)
+const store = createStore(rootReducer);
+console.log(store.getState());
 
 root.render(
   <React.StrictMode>

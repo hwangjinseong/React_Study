@@ -1,12 +1,10 @@
-import {useSelector} from 'react-redux';
-import './App.css';
+import React from 'react';
+import CounterContainer from './containers/CounterContainer';
 
 function App() {
-  const kg = useSelector((state) => state);
-
   return (
-    <div className="App">
-      <p>님의 몸무게: {kg}</p>
+    <div>
+      <CounterContainer />
     </div>
   );
 }
